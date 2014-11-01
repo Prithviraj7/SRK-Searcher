@@ -1,0 +1,97 @@
+Enter file contents here# -*- coding: utf-8 -*-
+"""
+Created on Fri Oct 17 20:10:03 2014
+
+@author: PRITHVIRAJ
+"""
+import scipy as s
+from sklearn.feature_extraction.text import TfidfVectorizer
+import sys
+import nltk.stem as ns
+es=ns.SnowballStemmer('english')
+class StemmedTfidfVectorizer(TfidfVectorizer):
+    def ba(self):
+        an=super(StemmedTfidfVectorizer,self).ba()
+        return lambda doc: (es.stem(w) for w in an(doc))
+f= open("C:\\Users\\PRITHVIRAJ\\Desktop\\nlp\\01.txt","r")
+g= open("C:\\Users\\PRITHVIRAJ\\Desktop\\nlp\\02.txt","r")
+p= open("C:\\Users\\PRITHVIRAJ\\Desktop\\nlp\\03.txt","r")
+q= open("C:\\Users\\PRITHVIRAJ\\Desktop\\nlp\\04.txt","r")
+r= open("C:\\Users\\PRITHVIRAJ\\Desktop\\nlp\\05.txt","r")
+w= open("C:\\Users\\PRITHVIRAJ\\Desktop\\nlp\\06.txt","r")
+
+h= []
+
+h.append(f.read()) 
+h.append(g.read())
+h.append(p.read())
+h.append(q.read())
+h.append(r.read())
+h.append(w.read())
+
+v=StemmedTfidfVectorizer(min_df=1,stop_words="english")
+
+x=v.fit_transform(h)
+
+ns,nf=x.shape
+print v.get_feature_names()
+
+newp="khan unicef"
+newv=v.transform([newp])
+
+def rd(v1,v2):
+    print "v1"
+    print v1.toarray()
+    print "v2"
+    print v2.toarray()
+    print "diff"
+    delt=v1-v2
+    print delt.toarray()
+    
+    print s.linalg.norm(delt.toarray())   
+    return s.linalg.norm(delt.toarray())
+best_doc=None
+best_dist=sys.maxint
+best_i=None
+
+for i in range(0,ns):
+    
+    post=h[i]
+    post = "".join(c for c in post if c not in ('!','.',':',',','[\d]','\''))
+    print "*************"
+    print post
+    print"********l***"
+    ########## this is how we eliminate faltuu posts!!
+    c=0
+    o=0
+    post=es.stem(post)
+    print "@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    print post.split()
+    print "_____________________________"
+    newp=newp.lower()
+    newp=es.stem(newp)
+    print newp
+    for iw in (newp.split()):
+        print iw
+        if (iw in post.split() ):###if important words in posts
+                        
+            c=1
+            print "found: "+iw+ str(o)
+            break
+    if c==0:
+        print "whpp"
+        continue
+    ###########################
+    post_vec=x.getrow(i) 
+    d=rd(post_vec,newv)
+    if(d<best_dist):
+        best_dist=d
+        best_i=i
+        
+        
+        
+print "feat no. %i with best dist %.2f: %s"%(best_i,best_dist,h[best_i])        
+    
+    
+    
+    
